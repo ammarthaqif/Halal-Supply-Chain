@@ -1,0 +1,6 @@
+{
+  "name": "HalalChain Malaysia - Farm-to-Table Supply Chain Traceability",
+  "description": "Cryptographic blockchain-verified supply chain and procurement platform for Malaysian restaurants, providing transparent traceability from certified farms and JAKIM slaughterhouses to the dining table.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
