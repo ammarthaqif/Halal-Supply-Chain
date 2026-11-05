@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   INITIAL_BATCHES, 
+  INITIAL_ESCROW_CONTRACTS,
   createInitialBlockchain, 
   verifyBlockchainIntegrity, 
   mineNewBlock 
@@ -15,6 +16,7 @@ import {
 import { TopNav, ActiveTab } from './components/TopNav';
 import { MarketplaceView } from './components/MarketplaceView';
 import { TraceabilityTimelineView } from './components/TraceabilityTimelineView';
+import { SmartContractDashboardView } from './components/SmartContractDashboardView';
 import { BlockchainExplorerView } from './components/BlockchainExplorerView';
 import { ProducerMintView } from './components/ProducerMintView';
 import { AIHalalAuditorView } from './components/AIHalalAuditorView';
@@ -30,7 +32,7 @@ export default function App() {
     verifyBlockchainIntegrity(createInitialBlockchain())
   );
   const [escrowModalBatch, setEscrowModalBatch] = useState<BatchItem | null>(null);
-  const [activeEscrows, setActiveEscrows] = useState<EscrowContract[]>([]);
+  const [escrows, setEscrows] = useState<EscrowContract[]>(INITIAL_ESCROW_CONTRACTS);
   const [autoOpenRecordModal, setAutoOpenRecordModal] = useState<boolean>(false);
 
   // Parse deep-linked URL parameters for direct batch QR scans
@@ -130,13 +132,59 @@ export default function App() {
 
   // Handler for escrow order
   const handleConfirmEscrowOrder = (contract: EscrowContract) => {
-    setActiveEscrows((prev) => [contract, ...prev]);
+    setEscrows((prev) => [contract, ...prev]);
+    setActiveTab('ESCROW_DASHBOARD');
+  };
+
+  // Handler for updating smart contract escrow status
+  const handleUpdateEscrowStatus = (
+    contractId: string, 
+    newStatus: 'LOCKED_IN_ESCROW' | 'RELEASED_TO_SUPPLIER' | 'REFUNDED_BREACH',
+    metadata?: { releaseTxHash?: string; breachReason?: string; currentTempC?: number }
+  ) => {
+    setEscrows((prev) =>
+      prev.map((escrow) => {
+        if (escrow.id === contractId) {
+          const isReleased = newStatus === 'RELEASED_TO_SUPPLIER';
+          const isBreached = newStatus === 'REFUNDED_BREACH';
+
+          return {
+            ...escrow,
+            status: newStatus,
+            currentTempC: metadata?.currentTempC !== undefined ? metadata.currentTempC : escrow.currentTempC,
+            transitStatus: isReleased ? 'DELIVERED' : isBreached ? 'IN_TRANSIT_HIGHWAY' : escrow.transitStatus,
+            triggers: {
+              geofenceVerified: isReleased ? true : escrow.triggers.geofenceVerified,
+              tempCompliant: isBreached ? false : true,
+              tamperSealVerified: isReleased ? true : escrow.triggers.tamperSealVerified,
+              chefSignedOff: isReleased ? true : isBreached ? false : escrow.triggers.chefSignedOff,
+            },
+            releaseTxHash: metadata?.releaseTxHash || escrow.releaseTxHash,
+            releaseTimestamp: isReleased ? new Date().toISOString() : escrow.releaseTimestamp,
+            breachReason: metadata?.breachReason || escrow.breachReason,
+          };
+        }
+        return escrow;
+      })
+    );
   };
 
   const handleNavigateToExplorer = (_blockIndex: number) => {
     setActiveTab('BLOCKCHAIN_EXPLORER');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const handleNavigateToTraceByBatchNumber = (batchNum: string) => {
+    const found = batches.find((b) => b.batchNumber === batchNum);
+    if (found) {
+      setCurrentBatch(found);
+      setAutoOpenRecordModal(false);
+      setActiveTab('TRACE_BATCH');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const activeEscrowsLockedCount = escrows.filter((e) => e.status === 'LOCKED_IN_ESCROW').length;
 
   return (
     <div className="min-h-screen bg-neutral-50 text-neutral-900 flex flex-col font-sans antialiased selection:bg-emerald-100 selection:text-emerald-900">
@@ -148,7 +196,7 @@ export default function App() {
           setActiveTab('TRACE_BATCH');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
-        cartCount={activeEscrows.length}
+        cartCount={activeEscrowsLockedCount}
       />
 
       {/* Main Content Area */}
@@ -173,6 +221,14 @@ export default function App() {
             blockchain={blockchain}
             onNavigateToExplorer={handleNavigateToExplorer}
             autoOpenRecordModal={autoOpenRecordModal}
+          />
+        )}
+
+        {activeTab === 'ESCROW_DASHBOARD' && (
+          <SmartContractDashboardView
+            escrows={escrows}
+            onUpdateEscrowStatus={handleUpdateEscrowStatus}
+            onNavigateToTrace={handleNavigateToTraceByBatchNumber}
           />
         )}
 

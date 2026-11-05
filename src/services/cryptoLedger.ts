@@ -3,7 +3,8 @@ import {
   BatchItem, 
   HalalTransaction, 
   ChainVerificationResult,
-  HalalCheckpointEvent 
+  HalalCheckpointEvent,
+  EscrowContract
 } from '../types/blockchain';
 
 // Fallback SHA-256 implementation if crypto.subtle is unavailable
@@ -757,3 +758,117 @@ export function mineNewBlock(
     transactions,
   };
 }
+
+export const INITIAL_ESCROW_CONTRACTS: EscrowContract[] = [
+  {
+    id: 'ESCROW-HL-2026-881',
+    batchId: 'MY-BEEF-2026-PERAK-0418',
+    productName: 'Perak Grass-Fed Brahman Prime Ribeye',
+    restaurantName: 'Restoran Pelita Nasi Kandar, Bangsar Baru',
+    supplierName: 'Rumah Penyembelihan Halal Zon Utara (Ipoh)',
+    destinationLocation: 'Bangsar Baru, 59100 Kuala Lumpur',
+    quantityKg: 40.0,
+    totalMYR: 3140.0,
+    storageType: 'CHILLED_0_4C',
+    currentTempC: 1.8,
+    status: 'LOCKED_IN_ESCROW',
+    transitStatus: 'IN_TRANSIT_HIGHWAY',
+    conditions: {
+      maxTempAllowedC: 4.0,
+      sealMustMatch: 'SEAL-MY-JAKIM-99814',
+      tempBreached: false,
+      sealVerified: true,
+    },
+    triggers: {
+      geofenceVerified: false,
+      tempCompliant: true,
+      tamperSealVerified: true,
+      chefSignedOff: false,
+    },
+    createdAt: '2026-11-04T08:30:00Z',
+  },
+  {
+    id: 'ESCROW-HL-2026-882',
+    batchId: 'MY-CHK-2026-SEL-0922',
+    productName: 'Ayam Kampung Organik Selangor (Whole Chilled)',
+    restaurantName: 'De.Wan 1958 by Chef Wan, The Linc KL',
+    supplierName: 'Pusat Penyembelihan Unggas Halal Klang',
+    destinationLocation: 'The Linc, Jalan Tun Razak, KL',
+    quantityKg: 80.0,
+    totalMYR: 2080.0,
+    storageType: 'CHILLED_0_4C',
+    currentTempC: 2.1,
+    status: 'RELEASED_TO_SUPPLIER',
+    transitStatus: 'DELIVERED',
+    conditions: {
+      maxTempAllowedC: 4.0,
+      sealMustMatch: 'SEAL-SEL-0922-POULTRY',
+      tempBreached: false,
+      sealVerified: true,
+    },
+    triggers: {
+      geofenceVerified: true,
+      tempCompliant: true,
+      tamperSealVerified: true,
+      chefSignedOff: true,
+    },
+    releaseTxHash: '0x8849b2c4189e3fa0982d77bc3a912e7741f10293847581920384756',
+    releaseTimestamp: '2026-11-04T15:40:00Z',
+    createdAt: '2026-11-04T06:15:00Z',
+  },
+  {
+    id: 'ESCROW-HL-2026-883',
+    batchId: 'MY-WAGYU-2026-QLD-1102',
+    productName: 'Australian Halal Black Angus Wagyu Striploin MB7+',
+    restaurantName: 'Marble 8 Steakhouse, KLCC',
+    supplierName: 'Trans-Ocean Cold Hub (Teys Australia HCAA)',
+    destinationLocation: 'Kuala Lumpur City Centre',
+    quantityKg: 45.0,
+    totalMYR: 8775.0,
+    storageType: 'FROZEN_NEG_18C',
+    currentTempC: -19.2,
+    status: 'LOCKED_IN_ESCROW',
+    transitStatus: 'DEPARTED_FACILITY',
+    conditions: {
+      maxTempAllowedC: -15.0,
+      sealMustMatch: 'MAQIS-SEAL-PORTKLANG-8812',
+      tempBreached: false,
+      sealVerified: true,
+    },
+    triggers: {
+      geofenceVerified: false,
+      tempCompliant: true,
+      tamperSealVerified: true,
+      chefSignedOff: false,
+    },
+    createdAt: '2026-11-05T02:00:00Z',
+  },
+  {
+    id: 'ESCROW-HL-2026-884',
+    batchId: 'MY-SPICE-2026-PNG-0104',
+    productName: 'Penang Artisanal Halal Spice & Sambal Paste Hub',
+    restaurantName: 'Warisan Sambal Nyonya, Petaling Jaya',
+    supplierName: 'Bayan Lepas Halal Industrial Hub',
+    destinationLocation: 'Section 14, Petaling Jaya, Selangor',
+    quantityKg: 50.0,
+    totalMYR: 900.0,
+    storageType: 'AMBIENT',
+    currentTempC: 24.5,
+    status: 'LOCKED_IN_ESCROW',
+    transitStatus: 'IN_TRANSIT_HIGHWAY',
+    conditions: {
+      maxTempAllowedC: 32.0,
+      sealMustMatch: 'SEAL-PNG-SPICE-0104',
+      tempBreached: false,
+      sealVerified: true,
+    },
+    triggers: {
+      geofenceVerified: false,
+      tempCompliant: true,
+      tamperSealVerified: true,
+      chefSignedOff: false,
+    },
+    createdAt: '2026-11-05T03:30:00Z',
+  },
+];
+

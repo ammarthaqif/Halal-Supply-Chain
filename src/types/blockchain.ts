@@ -47,6 +47,7 @@ export interface BatchItem {
   stateOrRegion: string;
   slaughterhouse: string;
   jakimCertRef: string;
+  jakimCertExpiryDate?: string;
   slaughtererId: string;
   slaughtererName: string;
   slaughterDate: string;
@@ -103,14 +104,27 @@ export interface EscrowContract {
   productName: string;
   restaurantName: string;
   supplierName: string;
+  destinationLocation: string;
   quantityKg: number;
   totalMYR: number;
+  storageType: StorageType;
+  currentTempC: number;
   status: 'LOCKED_IN_ESCROW' | 'RELEASED_TO_SUPPLIER' | 'REFUNDED_BREACH';
+  transitStatus: 'DEPARTED_FACILITY' | 'IN_TRANSIT_HIGHWAY' | 'ARRIVED_KITCHEN_GEOFENCE' | 'DELIVERED';
   conditions: {
     maxTempAllowedC: number;
     sealMustMatch: string;
     tempBreached: boolean;
     sealVerified: boolean;
   };
+  triggers: {
+    geofenceVerified: boolean;
+    tempCompliant: boolean;
+    tamperSealVerified: boolean;
+    chefSignedOff: boolean;
+  };
+  releaseTxHash?: string;
+  releaseTimestamp?: string;
+  breachReason?: string;
   createdAt: string;
 }

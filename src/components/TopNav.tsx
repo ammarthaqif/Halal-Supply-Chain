@@ -1,7 +1,7 @@
 import React from 'react';
-import { ShieldCheck, ScanLine, ShoppingBag, Layers, PlusCircle, Sparkles } from 'lucide-react';
+import { ShieldCheck, ScanLine, ShoppingBag, Layers, PlusCircle, Sparkles, Lock } from 'lucide-react';
 
-export type ActiveTab = 'MARKETPLACE' | 'TRACE_BATCH' | 'BLOCKCHAIN_EXPLORER' | 'PRODUCER_MINT' | 'AI_AUDITOR';
+export type ActiveTab = 'MARKETPLACE' | 'TRACE_BATCH' | 'ESCROW_DASHBOARD' | 'BLOCKCHAIN_EXPLORER' | 'PRODUCER_MINT' | 'AI_AUDITOR';
 
 interface TopNavProps {
   activeTab: ActiveTab;
@@ -33,7 +33,7 @@ export const TopNav: React.FC<TopNavProps> = ({
         </div>
 
         {/* Zone 2: Single-line Navigation Links */}
-        <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-neutral-600">
+        <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-neutral-600">
           <button
             onClick={() => setActiveTab('MARKETPLACE')}
             className={`flex items-center gap-1.5 transition-colors whitespace-nowrap shrink-0 ${
@@ -44,11 +44,6 @@ export const TopNav: React.FC<TopNavProps> = ({
           >
             <ShoppingBag className="w-4 h-4" />
             <span>Marketplace</span>
-            {cartCount > 0 && (
-              <span className="ml-1 px-1.5 py-0.2 text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 rounded-full">
-                {cartCount}
-              </span>
-            )}
           </button>
 
           <button
@@ -61,6 +56,23 @@ export const TopNav: React.FC<TopNavProps> = ({
           >
             <ScanLine className="w-4 h-4" />
             <span>Trace Batch (QR)</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('ESCROW_DASHBOARD')}
+            className={`flex items-center gap-1.5 transition-colors whitespace-nowrap shrink-0 ${
+              activeTab === 'ESCROW_DASHBOARD'
+                ? 'text-emerald-700 font-semibold'
+                : 'hover:text-neutral-900'
+            }`}
+          >
+            <Lock className="w-4 h-4" />
+            <span>Smart Escrows</span>
+            {cartCount > 0 && (
+              <span className="ml-1 px-1.5 py-0.2 text-[10px] font-mono font-bold bg-amber-100 text-amber-900 rounded-full">
+                {cartCount} Active
+              </span>
+            )}
           </button>
 
           <button
@@ -112,8 +124,8 @@ export const TopNav: React.FC<TopNavProps> = ({
         </div>
       </div>
 
-      {/* Mobile navigation row */}
-      <div className="md:hidden flex items-center justify-around border-t border-neutral-100 px-2 py-2 text-xs overflow-x-auto">
+      {/* Mobile / Tablet navigation row */}
+      <div className="lg:hidden flex items-center justify-around border-t border-neutral-100 px-2 py-2 text-xs overflow-x-auto gap-2">
         <button
           onClick={() => setActiveTab('MARKETPLACE')}
           className={`px-2 py-1 whitespace-nowrap ${activeTab === 'MARKETPLACE' ? 'font-bold text-emerald-700' : 'text-neutral-600'}`}
@@ -125,6 +137,12 @@ export const TopNav: React.FC<TopNavProps> = ({
           className={`px-2 py-1 whitespace-nowrap ${activeTab === 'TRACE_BATCH' ? 'font-bold text-emerald-700' : 'text-neutral-600'}`}
         >
           Trace QR
+        </button>
+        <button
+          onClick={() => setActiveTab('ESCROW_DASHBOARD')}
+          className={`px-2 py-1 whitespace-nowrap ${activeTab === 'ESCROW_DASHBOARD' ? 'font-bold text-emerald-700' : 'text-neutral-600'}`}
+        >
+          Escrows ({cartCount})
         </button>
         <button
           onClick={() => setActiveTab('BLOCKCHAIN_EXPLORER')}
